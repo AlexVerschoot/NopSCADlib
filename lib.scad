@@ -106,4 +106,5 @@ use <utils/offset.scad>
 use <utils/pcb_utils.scad>
 use <utils/sector.scad>
 use <utils/thread.scad>
+use <utils/dimension.scad>
 use <vitamins/photo_interrupter.scad>
