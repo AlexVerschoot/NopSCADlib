@@ -133,6 +133,55 @@ module extrusion_corner_bracket(type) { //! Corner bracket for extrusion
     }
 }
 
+
+function corner_connector_3D_screw_dia(type)        = type[1]; //! Diameter of the screw holes
+function corner_connector_3D_base_thickness(type)   = type[2]; //! Thickness of base of sliding t-nut
+function corner_connector_3D_side_thickness(type)   = type[3]; //! Thickness of side of sliding t-nut excluding the bottom
+function corner_connector_3D_side_thickness_nyloc(type)   = type[4]; //! Thickness of side of sliding t-nut including the bottom
+function corner_connector_3D_nut_length(type)      = type[5]; //! The length of the extruding nuts
+function corner_connector_3D_nut_ty1(type)             = type[6]; //! The sliding t-nut tab maximum width
+function corner_connector_3D_mut_ty2(type)        = type[7]; //!The sliding t-nut tab upper width
+function corner_connector_3D_base_outer_side_length(type)        = type[8]; //!The sliding t-nut tab upper width
+function corner_connector_3D_base_outer_height(type)        = type[9]; //!The sliding t-nut tab upper width
+function corner_connector_3D_base_inner_side_length(type)        = type[10]; //!The sliding t-nut tab upper width
+function corner_connector_3D_base_inner_height(type)        = type[11]; //!The sliding t-nut tab upper width
+function corner_connector_3D_base_radius(type)        = type[12]; //!The sliding t-nut tab upper width
+
+
+module corner_connector_3D(type) { //! 3-Corner bracket for extrusion
+	nut_washer = false; //unused
+    trap_depth = 0;
+	nut_hammer = false;
+
+
+    outer_side_length = corner_connector_3D_base_outer_side_length(type);
+    outer_height = corner_connector_3D_base_outer_height(type);
+    inner_side_length= corner_connector_3D_base_inner_side_length(type);
+    inner_height = corner_connector_3D_base_inner_height(type);
+    inner_offset_z = outer_height-inner_height+0.01;
+    r=corner_connector_3D_base_radius(type);
+    color("lightgray")
+    difference () {
+        rounded_cube_xy([outer_side_length, outer_side_length, outer_height], r=r);
+        translate([(outer_side_length-inner_side_length)/2,(outer_side_length-inner_side_length)/2,inner_offset_z])
+        rounded_cube_xy([inner_side_length, inner_side_length, inner_height], r=r);
+    }
+
+
+    translate([corner_connector_3D_side_thickness_nyloc(type)-corner_connector_3D_side_thickness(type) ,outer_side_length/2,corner_connector_3D_nut_length(type)/2+inner_offset_z])
+        rotate([0,90,0])
+        sliding_t_nut(["", corner_connector_3D_screw_dia(type) ,   corner_connector_3D_base_thickness(type),   corner_connector_3D_side_thickness(type), corner_connector_3D_side_thickness_nyloc(type),  nut_washer, trap_depth,  corner_connector_3D_nut_length(type),  corner_connector_3D_nut_ty1(type),  corner_connector_3D_mut_ty2(type), nut_hammer]);
+    translate([outer_side_length/2,outer_side_length-corner_connector_3D_side_thickness_nyloc(type)+corner_connector_3D_side_thickness(type) ,corner_connector_3D_nut_length(type)/2+inner_offset_z])
+        rotate([90,90,0])
+        sliding_t_nut(["", corner_connector_3D_screw_dia(type) ,   corner_connector_3D_base_thickness(type),   corner_connector_3D_side_thickness(type), corner_connector_3D_side_thickness_nyloc(type),  nut_washer, trap_depth,  corner_connector_3D_nut_length(type),  corner_connector_3D_nut_ty1(type),  corner_connector_3D_mut_ty2(type), nut_hammer]);
+    translate([outer_side_length/2,-corner_connector_3D_nut_length(type)/2+0.001,corner_connector_3D_side_thickness(type) ])
+        rotate([0,180,90])
+        sliding_t_nut(["", corner_connector_3D_screw_dia(type) ,   corner_connector_3D_base_thickness(type),   corner_connector_3D_side_thickness(type), corner_connector_3D_side_thickness_nyloc(type),  nut_washer, trap_depth,  corner_connector_3D_nut_length(type),  corner_connector_3D_nut_ty1(type),  corner_connector_3D_mut_ty2(type), nut_hammer]);
+    translate([outer_side_length+corner_connector_3D_nut_length(type)/2-0.001,outer_side_length/2,corner_connector_3D_side_thickness(type) ])
+        rotate([0,180,0])
+        sliding_t_nut(["", corner_connector_3D_screw_dia(type) ,   corner_connector_3D_base_thickness(type),   corner_connector_3D_side_thickness(type), corner_connector_3D_side_thickness_nyloc(type),  nut_washer, trap_depth,  corner_connector_3D_nut_length(type),  corner_connector_3D_nut_ty1(type),  corner_connector_3D_mut_ty2(type), nut_hammer]);
+}
+
 module extrusion_corner_bracket_hole_positions(type) { //! Place children at hole positions
     for(angle = [ [0, 90, 0], [-90, -90, 0] ])
         rotate(angle)
